@@ -1,0 +1,24 @@
+{
+    "name": "thunderer/clausure",
+    "description": "Utility for generating common closures used in array_map(), array_filter() and others.",
+    "keywords": ["closure", "function", "anonymous", "generator"],
+    "license": "MIT",
+    "authors": [
+        {
+            "name": "Tomasz Kowalczyk",
+            "email": "tomasz@kowalczyk.cc"
+        }
+    ],
+    "require": {
+        "php": ">=5.3"
+    },
+    "require-dev": {
+        "phpunit/phpunit": "@stable"
+    },
+    "autoload": {
+        "psr-4": {
+            "Thunder\\ClosureFactory\\": "src/",
+            "Thunder\\ClosureFactory\\Tests\\": "tests/"
+        }
+    }
+}
