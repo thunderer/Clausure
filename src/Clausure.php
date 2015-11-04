@@ -1,79 +1,50 @@
 <?php
-namespace Thunder\ClosureFactory;
+namespace Thunder\Clausure;
 
-class Clausure
+/**
+ * Think of each method as "returning closure that should (method name)".
+ *
+ * @author Tomasz Kowalczyk <tomasz@kowalczyk.cc>
+ */
+final class Clausure
 {
-    public static function getProperty($property)
+    public static function property($property)
     {
-        return function($object) use($property) {
-            $ref = new \ReflectionObject($object);
-            if(!$ref->hasProperty($property)) {
-                throw new \InvalidArgumentException();
-            }
-            $prop = $ref->getProperty($property);
-            $prop->setAccessible(true);
-
-            return $prop->getValue($object);
-        };
+        return property($property);
     }
 
-    public static function callMethod($method)
+    public static function method($method)
     {
-        return function($object) use($method) {
-            if(!method_exists($object, $method)) {
-                throw new \BadMethodCallException();
-            }
-
-            return call_user_func_array([$object, $method], []);
-        };
+        return method($method);
     }
 
-    public static function testProperty($property, $value)
+    public static function propertyEquals($property, $value)
     {
-        return function($object) use($property, $value) {
-            $ref = new \ReflectionObject($object);
-            if(!$ref->hasProperty($property)) {
-                throw new \InvalidArgumentException();
-            }
-            $prop = $ref->getProperty($property);
-            $prop->setAccessible(true);
-
-            return $value === $prop->getValue($object);
-        };
+        return propertyEquals($property, $value);
     }
 
-    public static function testMethod($method, $value)
+    public static function methodEquals($method, $value)
     {
-        return function($object) use($method, $value) {
-            if(!method_exists($object, $method)) {
-                throw new \BadMethodCallException();
-            }
-
-            return $value === call_user_func_array([$object, $method], []);
-        };
+        return methodEquals($method, $value);
     }
 
     public static function filterProperty(array $items, $property, $value)
     {
-        return array_filter($items, static::testProperty($property, $value));
+        return filterProperty($items, $property, $value);
     }
 
-    public static function filterMethodCall(array $items, $method, $value)
+    public static function filterMethod(array $items, $method, $value)
     {
-        $test = static::callMethod($method);
-
-        return array_filter($items, function($item) use($test, $value) {
-            return $value === $test($item);
-        });
+        return filterMethod($items, $method, $value);
     }
 
     public static function mapProperty(array $items, $property)
     {
-        return array_map(static::getProperty($property), $items);
+        return mapProperty($items, $property);
     }
 
-    public static function mapMethodCall(array $items, $method)
+    public static function mapMethod(array $items, $method)
     {
-        return array_map(static::callMethod($method), $items);
+        return mapMethod($items, $method);
     }
 }

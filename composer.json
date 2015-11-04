@@ -17,8 +17,9 @@
     },
     "autoload": {
         "psr-4": {
-            "Thunder\\ClosureFactory\\": "src/",
-            "Thunder\\ClosureFactory\\Tests\\": "tests/"
-        }
+            "Thunder\\Clausure\\": "src/",
+            "Thunder\\Clausure\\Tests\\": "tests/"
+        },
+        "files": ["src/Functions.php"]
     }
 }

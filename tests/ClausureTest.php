@@ -1,10 +1,14 @@
 <?php
-namespace Thunder\ClosureFactory\Tests;
+namespace Thunder\Clausure\Tests;
 
-use Thunder\ClosureFactory\Clausure;
-use Thunder\ClosureFactory\Tests\Fake\FakeClass;
+use Thunder\Clausure\Clausure;
+use Thunder\Clausure\Tests\Fake\FakeClass;
+use function Thunder\Clausure\filterProperty;
 
-class ClausureTest extends \PHPUnit_Framework_TestCase
+/**
+ * @author Tomasz Kowalczyk <tomasz@kowalczyk.cc>
+ */
+final class ClausureTest extends \PHPUnit_Framework_TestCase
 {
     /**
      * @dataProvider provideClosures
@@ -17,12 +21,12 @@ class ClausureTest extends \PHPUnit_Framework_TestCase
     public function provideClosures()
     {
         return array(
-            array(Clausure::getProperty('id'), new FakeClass(2, ''), 2),
-            array(Clausure::getProperty('name'), new FakeClass(1, 'xxx'), 'xxx'),
-            array(Clausure::callMethod('getName'), new FakeClass(1, 'xxx'), 'xxx'),
-            array(Clausure::testProperty('id', 1), new FakeClass(1, 'xxx'), true),
-            array(Clausure::testProperty('name', 'aaa'), new FakeClass(1, 'xxx'), false),
-            array(Clausure::testMethod('getName', 'aaa'), new FakeClass(1, 'xxx'), false),
+            array(Clausure::property('id'), new FakeClass(2, ''), 2),
+            array(Clausure::property('name'), new FakeClass(1, 'xxx'), 'xxx'),
+            array(Clausure::method('getName'), new FakeClass(1, 'xxx'), 'xxx'),
+            array(Clausure::propertyEquals('id', 1), new FakeClass(1, 'xxx'), true),
+            array(Clausure::propertyEquals('name', 'aaa'), new FakeClass(1, 'xxx'), false),
+            array(Clausure::methodEquals('getName', 'aaa'), new FakeClass(1, 'xxx'), false),
         );
     }
 
@@ -34,10 +38,11 @@ class ClausureTest extends \PHPUnit_Framework_TestCase
         $fakes = array($fake0, $fake1, $fake2);
 
         $this->assertSame([0 => $fake0, 2 => $fake2], Clausure::filterProperty($fakes, 'id', 1));
+        $this->assertSame([0 => $fake0, 2 => $fake2], filterProperty($fakes, 'id', 1));
         $this->assertSame([0 => $fake0, 1 => $fake1], Clausure::filterProperty($fakes, 'name', 'a'));
-        $this->assertSame([0 => $fake0, 1 => $fake1], Clausure::filterMethodCall($fakes, 'getName', 'a'));
+        $this->assertSame([0 => $fake0, 1 => $fake1], Clausure::filterMethod($fakes, 'getName', 'a'));
         $this->assertSame([1, 2, 1], Clausure::mapProperty($fakes, 'id'));
-        $this->assertSame(['a', 'a', 'b'], Clausure::mapMethodCall($fakes, 'getName'));
+        $this->assertSame(['a', 'a', 'b'], Clausure::mapMethod($fakes, 'getName'));
     }
 
     /**
@@ -52,16 +57,16 @@ class ClausureTest extends \PHPUnit_Framework_TestCase
     public function provideExceptions()
     {
         return array(
-            array(Clausure::getProperty('invalid'), new FakeClass(2, ''), 'InvalidArgumentException'),
-            array(Clausure::callMethod('getId'), new FakeClass(1, 'xxx'), 'BadMethodCallException'),
-            array(Clausure::testProperty('invalid', null), new FakeClass(1, 'xxx'), 'InvalidArgumentException'),
-            array(Clausure::testMethod('invalid', null), new FakeClass(1, 'xxx'), 'BadMethodCallException'),
+            array(Clausure::property('invalid'), new FakeClass(2, ''), 'InvalidArgumentException'),
+            array(Clausure::method('getId'), new FakeClass(1, 'xxx'), 'BadMethodCallException'),
+            array(Clausure::propertyEquals('invalid', null), new FakeClass(1, 'xxx'), 'InvalidArgumentException'),
+            array(Clausure::methodEquals('invalid', null), new FakeClass(1, 'xxx'), 'BadMethodCallException'),
         );
     }
 
     public function testTestPropertyException()
     {
         $this->setExpectedException('BadMethodCallException');
-        Clausure::filterMethodCall(array(new FakeClass(1, 'x')), 'getId', 1);
+        Clausure::filterMethod(array(new FakeClass(1, 'x')), 'getId', 1);
     }
 }

@@ -1,5 +1,5 @@
 <?php
-namespace Thunder\ClosureFactory\Tests\Fake;
+namespace Thunder\Clausure\Tests\Fake;
 
 class FakeClass
 {
